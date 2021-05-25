@@ -7,7 +7,7 @@
 ## Usage
 
 **Problem**
-```
+```javascript
 const MyComponent = ({ order }) => {
     return <div>{order.notes}</div>
 }
@@ -27,7 +27,7 @@ export default memo(MyComponent)
 In this situation, `MyComponent` will rerender every time `MyParentComponent` renders because the `order` prop is technically a new object each time, making `memo` effectively useless. This is where `should-skip-update` comes into play!
 
 **Solution**
-```
+```javascript
 import shouldSkipUpdate from 'should-skip-update'
 
 const MyComponent = ({ order }) => {
@@ -54,13 +54,13 @@ Now `MyComponent` will only rerender if the `notes` property of the `order` prop
 
 `should-skip-update` also comes with an optional dependency `eslint-plugin-should-skip-update` that helps make sure every prop property you use in a component is passed to the `shouldSkipUpdate` function. It acts sort of like a combination of the `react/prop-types` and `react-hooks/exhaustive-deps` eslint rules.
 
-### More Complex Example
+## More Complex Example
 
 In the component below, the `order` prop has many more properties than just the ones used in the `OrderDetails` component, and we don't want to rerender just because a property on `order` changed that isn't even used here. `shouldSkipUpdate` makes it so we can still pass the whole `order` object as a prop for convenience, but only rerender when necessary.
 
 The eslint plugin makes this extra easy because it will notify you if and what props you're missing in the `shouldSkipUpdate` dependency array.
 
-```
+```javascript
 import React, { memo } from 'react'
 
 import { Card, Col, Row, CardBody, CardHeader, FormGroup, Input } from 'reactstrap'
