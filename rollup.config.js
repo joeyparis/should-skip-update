@@ -5,8 +5,9 @@ import nodePolyFills from 'rollup-plugin-node-polyfills';
 export default {
   input: 'src/index.js',
   output: {
-    dir: 'output',
+    dir: 'dist',
     format: 'cjs',
+    exports: 'default',
   },
   plugins: [nodeResolve({
   	moduleDirectories: ['node_modules'],
