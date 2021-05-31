@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "test": "jest"
+    "test": "jest ./tests/*"
   },
   "keywords": [
     "react",
@@ -21,16 +21,15 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
-    "@babel/eslint-parser": "^7.14.3",
     "@babel/plugin-syntax-jsx": "^7.12.13",
     "@babel/preset-env": "^7.14.2",
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^27.0.1",
     "jest": "^27.0.1",
     "rollup": "^2.50.0",
     "rollup-plugin-node-polyfills": "^0.2.1"
+  },
   "optionalDependencies": {
+    "eslint-plugin-should-skip-update": "1.0.1"
   }
 }
