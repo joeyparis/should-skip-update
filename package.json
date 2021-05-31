@@ -7,6 +7,11 @@
     "build": "rollup -c rollup.config.js",
     "test": "jest ./tests/*"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeyparis/should-skip-update"
+  },
+  "homepage": "https://www.npmjs.com/package/should-skip-update",
   "keywords": [
     "react",
     "memo"
@@ -30,6 +35,6 @@
     "rollup-plugin-node-polyfills": "^0.2.1"
   },
   "optionalDependencies": {
-    "eslint-plugin-should-skip-update": "1.0.1"
+    "eslint-plugin-should-skip-update": "1.0.2"
   }
 }
