@@ -1,6 +1,6 @@
 {
   "name": "should-skip-update",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utility function for a more specific memo comparison",
   "main": "dist/index.js",
   "scripts": {
