@@ -108,3 +108,485 @@ test('should not skip update if dependency points to object instead of value', (
 	expect(shouldSkipUpdate(['a'])(prevProps, nextProps)).toBe(false)
 	expect(shouldSkipUpdate(['a.b'])(prevProps, nextProps)).toBe(false)
 })
+
+test('should skip update only if specified array values are the same', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Builder'
+				},
+				{
+					first_name: 'William',
+					last_name: 'Smith',
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Builder'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	expect(shouldSkipUpdate(['a.b[].first_name'])(prevProps, nextProps)).toBe(false)
+	expect(shouldSkipUpdate(['a.b[].last_name'])(prevProps, nextProps)).toBe(true)
+})
+
+test('should not skip update if array dependency length changes', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'William',
+					last_name: 'Smith',
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	expect(shouldSkipUpdate(['a.b[].last_name'])(prevProps, nextProps)).toBe(false)
+})
+
+test('should skip update if nested array value doesn\'t change', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				},
+				{
+					first_name: 'William',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	expect(shouldSkipUpdate(['a.b[].address.zip'])(prevProps, nextProps)).toBe(true)
+})
+
+test('should not skip update if nested array value doesn\'t change', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					address: {
+						zip: 12345
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+					address: {
+						zip: 54321
+					}
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.b[].first_name'])(prevProps, nextProps)).toBe(true)
+	expect(shouldSkipUpdate(['a.b[].address.zip'])(prevProps, nextProps)).toBe(false)
+})
+
+test('should skip update if array values stay the same', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				}
+			],
+			e: [1,2,3],
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: [1,2,3],
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.e[]'])(prevProps, nextProps)).toBe(true)
+})
+
+test('should not skip update if array values change class', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				}
+			],
+			e: [1,2,3],
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: [1,'2',3],
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.e[]'])(prevProps, nextProps)).toBe(false)
+})
+
+test('should not skip update if array changes class', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				}
+			],
+			e: [1,2,3],
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: 3,
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.e[]'])(prevProps, nextProps)).toBe(false)
+})
+
+test('should not skip update if array object changes', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				}
+			],
+			e: [1,{a: 'b'},3],
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: [1,{a: 'b'},3],
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.e[]'])(prevProps, nextProps)).toBe(false)
+})
+
+test('should skip update if array keeps same object', () => {
+	const obj = {a: 'b'}
+
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				}
+			],
+			e: [1,obj,3],
+		},
+		f: 4
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith',
+				}
+			],
+			e: [1,obj,3],
+		},
+		f: 4
+	}
+	
+	expect(shouldSkipUpdate(['a.e[]'])(prevProps, nextProps)).toBe(true)
+})
+
+test('should skip with muliple levels of arrays', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+			],
+		},
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+			],
+		},
+	}
+
+	expect(shouldSkipUpdate(['a.b[].kids.names[].a'])(prevProps, nextProps)).toBe(true)
+})
+
+test('should not skip with multiple levels of changing arrays', () => {
+	const prevProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+			],
+		},
+	}
+
+	const nextProps = {
+		a: {
+			b: [
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 1}, {b: 2}]
+					}
+				},
+				{
+					first_name: 'Bill',
+					last_name: 'Smith'
+				},
+				{
+					first_name: 'Bob',
+					last_name: 'Smith',
+					kids: {
+						names: [{a: 2}, {b: 2}]
+					}
+				},
+			],
+		},
+	}
+
+	expect(shouldSkipUpdate(['a.b[].kids.names[].a'])(prevProps, nextProps)).toBe(false)
+})
